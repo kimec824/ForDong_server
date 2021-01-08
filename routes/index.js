@@ -11,16 +11,22 @@ var db_name = 'madcamp_project2';
 var mydb = null;
 var collection_name = null;
 
-router.get('/', function(req, res, next) {
+router.get('/contacts', function(req, res, next) {
     mongoClient.connect('mongodb://localhost/' + db_name, function(error, client){
         if(error){
-        console.log(error);
-    }else{
-        console.log("connected: " + db_name);
-        mydb = client.db(db_name);
-        collection_name = 'contacts'        
-
+            console.log(error);
+        }
+        else{
+            console.log("connected: " + db_name);
+            mydb = client.db(db_name);
+            collection_name = 'contacts';
+            mydb.collection(collection_name).find({}).toArray(function(err, docs){
+                console.log("found the following records");
+                res.status(200).json({'Contacts' : docs});
+            });
+        /**
         var cursor = mydb.collection(collection_name).find();
+
         cursor.each(function(err,doc){
             if(err){
                 console.log(err);
@@ -34,16 +40,12 @@ router.get('/', function(req, res, next) {
                 }
             }
         });
-    }
-    })
-    res.json({
-        status : 'API its working',
-        message : 'Welcome to Resthub crasdsf hi!'
+        */
+        }
     });
-    
 });
 
-router.post('/',function(req,res){
+router.post('/contacts',function(req,res){
     res.json({
         status : 'API its working',
         message : 'Welcome to Resthub crasdsf hi!'
