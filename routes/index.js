@@ -24,7 +24,7 @@ router.get('/contacts', function(req, res, next) {
 
             collection = mydb.collection(collection_name);
             collection.find({}).toArray(function(err, results){
-                res.status(200).json({'myCollection' : results});
+                res.status(200).json({'Contacts' : results});
               });
 
             //////////// For DEBUG //////
@@ -48,7 +48,44 @@ router.get('/contacts', function(req, res, next) {
     });
 });
 
-router.post('/contacts',function(req,res){
+router.post('/contacts', function(req, res, next) {
+    collection_name = 'contacts'        
+
+    mongoClient.connect('mongodb://localhost/', function(error, client){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log("connected: " + db_name);
+            mydb = client.db(db_name);
+
+            collection = mydb.collection(collection_name);
+            collection.find({}).toArray(function(err, results){
+                res.status(200).json({'Contacts' : results});
+              });
+
+            //////////// For DEBUG //////
+            var cursor = mydb.collection(collection_name).find();
+            cursor.each(function (err, doc) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    if (doc != null) {
+                        console.log(doc);
+                    }
+                    else {
+                        console.log("으악");
+                    }
+                }
+            });
+            /////////////////////////////
+
+        } 
+    });
+});
+
+/**
+router.post('/',function(req,res){
     collection_name = 'contacts'        
 
     mongoClient.connect('mongodb://localhost/', function(error, client){
@@ -82,7 +119,7 @@ router.post('/contacts',function(req,res){
         } 
     });
 });
-
+*/
 module.exports = router;
 
 
