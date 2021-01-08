@@ -10,43 +10,76 @@ var mongoClient = require('mongodb').MongoClient;
 var db_name = 'madcamp_project2';
 var mydb = null;
 var collection_name = null;
+var collection;
 
-router.get('/', function(req, res, next) {
-    mongoClient.connect('mongodb://localhost/' + db_name, function(error, client){
-        if(error){
-        console.log(error);
-    }else{
-        console.log("connected: " + db_name);
-        mydb = client.db(db_name);
-        collection_name = 'contacts'        
+router.get('/contacts', function(req, res, next) {
+    collection_name = 'contacts'        
 
-        var cursor = mydb.collection(collection_name).find();
-        cursor.each(function(err,doc){
-            if(err){
-                console.log(err);
-            }
-            else{
-                if(doc != null){
-                    console.log(doc);
+    mongoClient.connect('mongodb://localhost/', function(error, client){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log("connected: " + db_name);
+            mydb = client.db(db_name);
+
+            collection = mydb.collection(collection_name);
+            collection.find({}).toArray(function(err, results){
+                res.status(200).json({'myCollection' : results});
+              });
+
+            //////////// For DEBUG //////
+            var cursor = mydb.collection(collection_name).find();
+            cursor.each(function (err, doc) {
+                if (err) {
+                    console.log(err);
                 }
-                else{
-                console.log("으악");
+                else {
+                    if (doc != null) {
+                        console.log(doc);
+                    }
+                    else {
+                        console.log("으악");
+                    }
                 }
-            }
-        });
-    }
-    })
-    res.json({
-        status : 'API its working',
-        message : 'Welcome to Resthub crasdsf hi!'
+            });
+            /////////////////////////////
+
+        } 
     });
-    
 });
 
-router.post('/',function(req,res){
-    res.json({
-        status : 'API its working',
-        message : 'Welcome to Resthub crasdsf hi!'
+router.post('/contacts',function(req,res){
+    collection_name = 'contacts'        
+
+    mongoClient.connect('mongodb://localhost/', function(error, client){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log("connected: " + db_name);
+            mydb = client.db(db_name);
+
+            collection = mydb.collection(collection_name);
+            test_collection.find({}).toArray(function(err, results){
+                res.status(200).json({'myCollection' : results});
+              });
+
+            ////////////// For DEBUG ////////////////////
+            var cursor = mydb.collection(collection_name).find();
+            cursor.each(function (err, doc) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    if (doc != null) {
+                        console.log(doc);
+                    }
+                    else {
+                        console.log("으악");
+                    }
+                }
+            });
+          /////////////////////////////////////////////  
+        } 
     });
 });
 

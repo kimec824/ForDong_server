@@ -31,7 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //var router = require('./routes/index')(app, Book);
 
 app.use('/', indexRouter);
-app.use('/', usersRouter);
+app.use('/users', usersRouter);
 
 //connect to mongodb server
 var mongoClient = require('mongodb').MongoClient;
@@ -39,7 +39,7 @@ var db_name = 'madcamp_project2';
 var mydb = null;
 
 
-mongoClient.connect('mongodb://localhost/' + db_name, function(error, client){
+/*mongoClient.connect('mongodb://localhost/' + db_name, function(error, client){
   if(error){
     console.log(error);
   }else{
@@ -52,8 +52,26 @@ mongoClient.connect('mongodb://localhost/' + db_name, function(error, client){
     var catherine = {name:'Catherine', phonenumber:010-4444-4444, position:'Member'}
     mydb.collection('Contacts').insertMany([jordan,amanda,jessica,james,catherine]);
     client.close();
+
+    
+    var cursor = mydb.collection('contacts').find();
+    cursor.each(function(err,doc){
+        if(err){
+            console.log(err);
+        }
+        else{
+            if(doc != null){
+                console.log(doc);
+            }
+            else{
+              console.log("으악");
+            }
+        }
+    });
+    //app.set('mydb', mydb);
+    
   }
-})
+})*/
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
