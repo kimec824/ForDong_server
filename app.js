@@ -4,6 +4,33 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var path = require('path');
+
+/**for save image
+var multer, storage, crypto;
+multer = require('multer');
+crypto = require('crypto');
+
+var form = "<!DOCTYPE HTML><html><body>" +
+"<form method='post' action='/upload' enctype='multipart/form-data'>" +
+"<input type='file' name='upload'/>" +
+"<input type='submit' /></form>" +
+"</body></html>";
+
+var fs = require('fs');
+
+storage = multer.diskStorage({
+  destination: './uploads/',
+  filename: function(req, file, cb) {
+    return crypto.pseudoRandomBytes(16, function(err, raw) {
+      if (err) {
+        return cb(err);
+      }
+      return cb(null, "" + (raw.toString('hex')) + (path.extname(file.originalname)));
+    });
+  }
+});
+*/
+
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
