@@ -31,7 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //var router = require('./routes/index')(app, Book);
 
 app.use('/', indexRouter);
-app.use('/', usersRouter);
+app.use('/users', usersRouter);
 
 //connect to mongodb server
 var mongoClient = require('mongodb').MongoClient;
@@ -39,14 +39,14 @@ var db_name = 'madcamp_project2';
 var mydb = null;
 
 
-mongoClient.connect('mongodb://localhost/' + db_name, function(error, client){
+/*mongoClient.connect('mongodb://localhost/' + db_name, function(error, client){
   if(error){
     console.log(error);
   }else{
     console.log("connected: " + db_name);
     mydb = client.db(db_name);
     client.close();
-    /**
+    
     var cursor = mydb.collection('contacts').find();
     cursor.each(function(err,doc){
         if(err){
@@ -62,9 +62,9 @@ mongoClient.connect('mongodb://localhost/' + db_name, function(error, client){
         }
     });
     //app.set('mydb', mydb);
-    */
+    
   }
-})
+})*/
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
