@@ -45,24 +45,13 @@ mongoClient.connect('mongodb://localhost/' + db_name, function(error, client){
   }else{
     console.log("connected: " + db_name);
     mydb = client.db(db_name);
+    var jordan = {name:'Jordan', phonenumber:010-2380-1139, position:'President'};
+    var amanda = {name:'Amanda', phonenumber:010-1111-1111, position:'Member'};
+    var jessica = {name:'Jessica', phonenumber:010-2222-2222, position:'Member'};
+    var james = {name:'James', phonenumber:010-3333-3333, position:'Member'};
+    var catherine = {name:'Catherine', phonenumber:010-4444-4444, position:'Member'}
+    mydb.collection('Contacts').insertMany([jordan,amanda,jessica,james,catherine]);
     client.close();
-    /**
-    var cursor = mydb.collection('contacts').find();
-    cursor.each(function(err,doc){
-        if(err){
-            console.log(err);
-        }
-        else{
-            if(doc != null){
-                console.log(doc);
-            }
-            else{
-              console.log("으악");
-            }
-        }
-    });
-    //app.set('mydb', mydb);
-    */
   }
 })
 
