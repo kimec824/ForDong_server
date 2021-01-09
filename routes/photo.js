@@ -28,6 +28,9 @@ var form = "<!DOCTYPE HTML><html><body>" +
 "<input type='submit' /></form>" +
 "</body></html>";
 
+var mongoClient = require('mongodb').MongoClient;
+var db_name = 'madcamp_project2';
+
 router.get('/', function (req, res){
     //res.writeHead(200, {'Content-Type': 'text/html' });
     //res.end(form);
@@ -74,9 +77,34 @@ router.post( "/upload", multer({storage: storage}).single('upload'), function(re
       console.log(req.body);
       res.redirect("/photos/uploads/" + req.file.filename);
       console.log(req.file.filename);
-      return res.status(200).end();
+
+      mongoClient.connect('mongodb://localhost/', function(error, client){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log("connected: " + db_name);
+            mydb = client.db(db_name);
+            collection = mydb.collection(collection_name);
+            var new_name = 'sample_name';
+            var new_photo_path = req.file.filename;
+            var new_context = 'sample_context';
+            var new_photo = {
+                name : new_name,
+                file_path : new_photo_path,
+                context : new_context
+            }
+            collection.insertOne(new_photo, function(err, res){
+                if(err) throw err;
+                console.log("1 document push");
+                client.close();
+            });
+        } 
+        
     });
-  
+    
+    return res.status(200).end();
+});
+
 router.get('/uploads/:upload', function (req, res){
     file = req.params.upload;
     console.log("hi");
