@@ -1,10 +1,10 @@
 //const { db } = require('mongodb');
 //const router = require('./users');
 //Initialize express router
+
 express = require('express')
 router = express.Router();
 //  get homepage 
-
 
 var mongoClient = require('mongodb').MongoClient;
 var db_name = 'madcamp_project2';
@@ -14,8 +14,8 @@ var collection;
 
 var bodyParser = require('body-parser');
 
-router.get('/contacts', function(req, res, next) {
-    collection_name = 'contacts'        
+router.get('/', function(req, res, next) {
+    collection_name = 'identification'        
 
     mongoClient.connect('mongodb://localhost/', function(error, client){
         if (error) {
@@ -24,10 +24,26 @@ router.get('/contacts', function(req, res, next) {
             console.log("connected: " + db_name);
             mydb = client.db(db_name);
 
+            var id = req.query.ID;
+            var password = req.query.Password;
+
             collection = mydb.collection(collection_name);
-            collection.find({}).toArray(function(err, results){
+            collection.find({"ID":id, "Password":password}).toArray(function(err, docs){
+                if(err){
+                    res.send({"Message":"err"});
+                }
+
+                if(docs.length > 0){
+                    res.send({"Message":"verified"});
+                }
+                else{
+                    res.send({"Message":"fail"});
+                }
+            });
+
+            /*collection.find({"ID": req.query.ID}).toArray(function(err, results){
                 res.status(200).json({'myCollection' : results});
-              });
+              });*/
 
             //////////// For DEBUG //////
             var cursor = mydb.collection(collection_name).find();
@@ -50,8 +66,66 @@ router.get('/contacts', function(req, res, next) {
     });
 });
 
-router.post('/contacts',function(req,res){
-    collection_name = 'contacts'        
+router.get('/signup', function(req, res, next) {
+    collection_name = 'identification'        
+
+    mongoClient.connect('mongodb://localhost/', function(error, client){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log("connected: " + db_name);
+            mydb = client.db(db_name);
+
+            var id = req.query.ID;
+            var password = req.query.Password;
+
+            collection = mydb.collection(collection_name);
+            collection.find({"ID":id}).toArray(function(err, docs){
+                if(err){
+                    res.send({"Message":"err"});
+                }
+
+                if(docs.length > 0){
+                    res.send({"Message":"Already exist"});
+                }
+
+                else{
+                    if(id.length != 0 && password.length != 0){
+                        collection.insert({"ID": id, "Password": password});
+                        res.send({"Message":"Sign up"});
+                    }
+                    else
+                        res.send({"Message":"Wrong Type"});
+                }
+            });
+
+            /*collection.find({"ID": req.query.ID}).toArray(function(err, results){
+                res.status(200).json({'myCollection' : results});
+              });*/
+
+            //////////// For DEBUG //////
+            var cursor = mydb.collection(collection_name).find();
+            cursor.each(function (err, doc) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    if (doc != null) {
+                        console.log(doc);
+                    }
+                    else {
+                        console.log("END");
+                    }
+                }
+            });
+            /////////////////////////////
+
+        } 
+    });
+});
+
+router.post('/',function(req,res){
+    collection_name = 'identification'        
 
     mongoClient.connect('mongodb://localhost/', function(error, client){
         if (error) {
@@ -85,6 +159,51 @@ router.post('/contacts',function(req,res){
                 }
             });
           /////////////////////////////////////////////  
+        } 
+    });
+});
+
+router.post('/signup', function(req, res, next) {
+    collection_name = 'contacts'        
+
+    mongoClient.connect('mongodb://localhost/', function(error, client){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log("connected: " + db_name);
+            mydb = client.db(db_name);
+
+            var id = req.query.ID;
+            var password = req.query.Password;
+
+            collection = mydb.collection(collection_name);
+
+            if(Object.keys(req.body).length !== 0)
+                collection.insert(req.body);
+
+            res.send({"Message":"Fin"});
+
+            /*collection.find({"ID": req.query.ID}).toArray(function(err, results){
+                res.status(200).json({'myCollection' : results});
+              });*/
+
+            //////////// For DEBUG //////
+            var cursor = mydb.collection(collection_name).find();
+            cursor.each(function (err, doc) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    if (doc != null) {
+                        console.log(doc);
+                    }
+                    else {
+                        console.log("END");
+                    }
+                }
+            });
+            /////////////////////////////
+
         } 
     });
 });
