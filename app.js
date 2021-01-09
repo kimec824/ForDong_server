@@ -11,9 +11,12 @@ var logger = require('morgan');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var loginRouter = require('./routes/login');
+var contactRouter = require('./routes/contact');
+var photoRouter = require('./routes/photo');
+
+var usersRouter = require('./routes/users');
+var indexRouter = require('./routes/index');
 
 var PORT = 8080;
 
@@ -28,45 +31,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//var Book = require('./models/book');
-//var router = require('./routes/index')(app, Book);
-
-app.use('/', indexRouter);
+//app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
 app.use('/login',loginRouter);
-
-//connect to mongodb server
-var mongoClient = require('mongodb').MongoClient;
-var db_name = 'madcamp_project2';
-var mydb = null;
-
-
-/*mongoClient.connect('mongodb://localhost/' + db_name, function(error, client){
-  if(error){
-    console.log(error);
-  }else{
-    console.log("connected: " + db_name);
-    mydb = client.db(db_name);
-    client.close();
-    
-    var cursor = mydb.collection('contacts').find();
-    cursor.each(function(err,doc){
-        if(err){
-            console.log(err);
-        }
-        else{
-            if(doc != null){
-                console.log(doc);
-            }
-            else{
-              console.log("으악");
-            }
-        }
-    });
-    //app.set('mydb', mydb);
-    
-  }
-})*/
+app.use('/contacts',contactRouter);
+app.use('/photos',photoRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -88,6 +58,5 @@ var server = app.listen(PORT, () => {
   console.log(`Server is running at PORT ${PORT}`);
 });
 
-module.exports = {app, mydb,};
-//module.exports = mydb;
+module.exports = app;
 
