@@ -12,7 +12,7 @@ var mydb = null;
 var collection_name = null;
 var collection;
 
-router.get('/api/contacts', function(req, res, next) {
+router.get('/contacts', function(req, res, next) {
 
     collection_name = 'contacts'        
 
@@ -50,7 +50,7 @@ router.get('/api/contacts', function(req, res, next) {
     });
 });
 
-router.post('/api/contacts', function(req, res, next) {
+router.post('/contacts', function(req, res, next) {
     collection_name = 'contacts'        
 
     mongoClient.connect('mongodb://localhost/', function(error, client){
@@ -101,16 +101,17 @@ storage = multer.diskStorage({
     });
   }
 });
-
+/**
+ * in html
 // for use image
 var form = "<!DOCTYPE HTML><html><body>" +
 "<form method='post' action='/upload' enctype='multipart/form-data'>" +
 "<input type='file' name='upload'/>" +
 "<input type='submit' /></form>" +
 "</body></html>";
+*/
 
-
-router.get('/', function (req, res){
+router.get('/photos', function (req, res){
     res.writeHead(200, {'Content-Type': 'text/html' });
     res.end(form);
   
@@ -118,12 +119,43 @@ router.get('/', function (req, res){
 // Post files
 
 router.post( "/upload", multer({storage: storage}).single('upload'), function(req, res) {
-      console.log(req.file);
-      console.log(req.body);
-      res.redirect("/uploads/" + req.file.filename);
-      console.log(req.file.filename);
-      return res.status(200).end();
+    console.log(req.file);
+    console.log(req.body);
+    res.redirect("/uploads/" + req.file.filename);
+    console.log(req.file.filename);
+    
+    collection_name = 'photos'        
+
+    mongoClient.connect('mongodb://localhost/', function(error, client){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log("connected: " + db_name);
+            mydb = client.db(db_name);
+            collection = mydb.collection(collection_name);
+
+            var new_name = 'sample_name';
+            var new_photo_path = req.file.filename;
+            var new_context = 'sample_context';
+
+            var new_photo = {
+                name : new_name,
+                file_path : new_photo_path,
+                context : new_context
+            }
+
+            collection.insertOne(new_photo, function(err, res){
+                if(err) throw err;
+                console.log("1 document push");
+                client.close();
+            });
+
+        } 
+        
     });
+    
+    return res.status(200).end();
+});
   
 router.get('/uploads/:upload', function (req, res){
     file = req.params.upload;
@@ -133,8 +165,9 @@ router.get('/uploads/:upload', function (req, res){
     var img = fs.readFileSync("./uploads/" + file);
     res.writeHead(200, {'Content-Type': 'image/png' });
     res.end(img, 'binary');
-  });
+});
   
+
   
 
 /**
