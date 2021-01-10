@@ -97,6 +97,7 @@ router.post( "/upload", multer({storage: storage}).single('upload'), function(re
                 if(err) throw err;
                 console.log("1 document push");
                 client.close();
+                
             });
         } 
         

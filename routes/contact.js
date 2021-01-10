@@ -84,4 +84,49 @@ router.post('/',function(req,res){
     });
 });
 
+router.put('/',function(req, res){
+    mongoClient.connect('mongodb://localhost/', function(error, client){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log("connected: " + db_name);
+            db = client.db(db_name);
+
+            collection = db.collection(collection_name);
+            
+            // req.body.phone으로 search 하고 change함.
+            var query = {phone:req.body.phone};
+            var operator = {name:req.body.changename, email:req.body.changeemail, phone: req.body.changephone};
+            var option = {upsert:true};
+            collection.update(query,operator,option,function(err,upserted){
+                if(err){
+                    console.log(err);
+                    res.status(200).send({"Message":"fail"});
+                }
+                else{
+                    console.log('updated successfully!');
+                    res.status(200).send({"Message":"success"});    
+                }
+            });
+
+            ////////////// For DEBUG ////////////////////
+            var cursor = collection.find({phone:req.body.changephone});
+            cursor.each(function (err, doc) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    if (doc != null) {
+                        console.log(doc);
+                    }
+                    else {
+                        console.log("END");
+                    }
+                }
+            });
+          /////////////////////////////////////////////  
+        } 
+    });
+})
+
 module.exports = router;
