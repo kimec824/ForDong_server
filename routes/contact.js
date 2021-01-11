@@ -43,6 +43,54 @@ router.get('/', function(req, res, next) {
     });
 });
 
+router.get('/:ID', function(req, res, next) {
+    var id = req.params.ID;
+    console.log(id);
+    mongoClient.connect('mongodb://localhost/', function(error, client){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log("connected: " + db_name);
+            db = client.db(db_name);
+
+            collection = db.collection(collection_name);
+
+            var Contacts;
+
+            collection.find({"ID":id}).toArray(function(err, results){
+                Contacts = {
+                    Contact: results
+                }
+                //res.status(200).json({'Contact' : results});
+              });
+              
+            collection = db.collection('photos');
+
+            collection.find({"ID":id}).toArray(function(err, results){  
+                res.status(200).json([Contacts, {'Photo' : results}]);
+              });
+
+            //////////// For DEBUG //////
+            var cursor = db.collection(collection_name).find();
+            cursor.each(function (err, doc) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    if (doc != null) {
+                        console.log(doc);
+                    }
+                    else {
+                        console.log("END");
+                    }
+                }
+            });
+            /////////////////////////////
+
+        } 
+    });
+});
+
 router.post('/',function(req,res){
     mongoClient.connect('mongodb://localhost/', function(error, client){
         if (error) {
@@ -95,10 +143,10 @@ router.put('/',function(req, res){
             collection = db.collection(collection_name);
             
             // req.body.phone으로 search 하고 change함.
-            var query = {phone:req.body.phone};
+            var query = {ID:req.body.ID};
             var operator = {name:req.body.changename, email:req.body.changeemail, phone: req.body.changephone};
             var option = {upsert:true};
-            collection.update(query,operator,option,function(err,upserted){
+            collection.update(query,{$set: operator},option,function(err,upserted){
                 if(err){
                     console.log(err);
                     res.status(200).send({"Message":"fail"});
