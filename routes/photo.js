@@ -77,6 +77,9 @@ router.post( "/upload", multer({storage: storage}).single('upload'), function(re
       console.log(req.body);
       res.redirect("/photos/uploads/" + req.file.filename);
       console.log(req.file.filename);
+      console.log('/////////fordebug///////////');
+      console.log(req.body.userId);
+      console.log(req.body.group);
 
       mongoClient.connect('mongodb://localhost/', function(error, client){
         if (error) {
@@ -85,13 +88,16 @@ router.post( "/upload", multer({storage: storage}).single('upload'), function(re
             console.log("connected: " + db_name);
             mydb = client.db(db_name);
             collection = mydb.collection(collection_name);
-            var new_name = 'sample_name';
+            var new_id = req.body.userId;
             var new_photo_path = req.file.filename;
-            var new_context = 'sample_context';
+            var new_context = req.body.content;
+            var new_photo_group = req.body.group;
+
             var new_photo = {
-                name : new_name,
+                ID : new_id,
                 file_path : new_photo_path,
-                context : new_context
+                context : new_context,
+                photo_group : new_photo_group
             }
             collection.insertOne(new_photo, function(err, res){
                 if(err) throw err;
@@ -102,7 +108,6 @@ router.post( "/upload", multer({storage: storage}).single('upload'), function(re
         } 
         
     });
-    
     return res.status(200).end();
 });
 
