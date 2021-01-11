@@ -54,8 +54,20 @@ router.get('/:ID', function(req, res, next) {
             db = client.db(db_name);
 
             collection = db.collection(collection_name);
+
+            var Contacts;
+
             collection.find({"ID":id}).toArray(function(err, results){
-                res.status(200).json({'Contact' : results});
+                Contacts = {
+                    Contact: results
+                }
+                //res.status(200).json({'Contact' : results});
+              });
+              
+            collection = db.collection('photos');
+
+            collection.find({"ID":id}).toArray(function(err, results){  
+                res.status(200).json([Contacts, {'Photo' : results}]);
               });
 
             //////////// For DEBUG //////
@@ -131,10 +143,10 @@ router.put('/',function(req, res){
             collection = db.collection(collection_name);
             
             // req.body.phone으로 search 하고 change함.
-            var query = {phone:req.body.phone};
+            var query = {ID:req.body.ID};
             var operator = {name:req.body.changename, email:req.body.changeemail, phone: req.body.changephone};
             var option = {upsert:true};
-            collection.update(query,operator,option,function(err,upserted){
+            collection.update(query,{$set: operator},option,function(err,upserted){
                 if(err){
                     console.log(err);
                     res.status(200).send({"Message":"fail"});

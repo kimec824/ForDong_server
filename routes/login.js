@@ -9,6 +9,31 @@ var collection_name = 'identification';
 var db = null;
 var collection;
 
+var multer, storage, crypto;
+multer = require('multer');
+crypto = require('crypto');
+var fs = require('fs');
+var path = require('path');
+
+storage = multer.diskStorage({
+    destination: './uploads',
+    filename: function(req, file, cb) {
+    return crypto.pseudoRandomBytes(16, function(err, raw) {
+      if (err) {
+        return cb(err);
+      }
+      return cb(null, "" + (raw.toString('hex')) + (path.extname(file.originalname)));
+    });
+  }
+});
+
+// for use image
+var form = "<!DOCTYPE HTML><html><body>" +
+"<form method='post' action='/upload' enctype='multipart/form-data'>" +
+"<input type='file' name='upload'/>" +
+"<input type='submit' /></form>" +
+"</body></html>";
+
 router.get('/', function(req, res, next) {
     mongoClient.connect('mongodb://localhost/', function(error, client){
         if (error) {
@@ -193,6 +218,35 @@ router.post('/signup', function(req, res, next) {
 
         } 
     });
+});
+
+// Post files
+router.post( "/upload", multer({storage: storage}).single('upload'), function(req, res) {
+    console.log(req.file);
+    console.log(req.body);
+    //res.redirect("/photos/uploads/" + req.file.filename);
+    console.log(req.file.filename);
+
+    mongoClient.connect('mongodb://localhost/', function(error, client){
+      if (error) {
+          console.log(error);
+      } else {
+          console.log("connected: " + db_name);
+          mydb = client.db(db_name);
+          collection = mydb.collection('contacts');
+          var ID = req.body.ID;
+          var new_photo_path = req.file.filename;
+  
+        collection.update({"ID":ID},{$set: {"photo":new_photo_path}}, function(err){
+            if(err) throw err;
+        }
+        );
+        
+      } 
+      
+  });
+  
+  return res.status(200).end();
 });
 
 module.exports = router;

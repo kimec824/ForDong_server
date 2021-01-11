@@ -15,6 +15,7 @@ var loginRouter = require('./routes/login');
 var contactRouter = require('./routes/contact');
 var photoRouter = require('./routes/photo');
 var boardRouter = require('./routes/board');
+var voteRouter = require('./routes/vote');
 
 var usersRouter = require('./routes/users');
 var indexRouter = require('./routes/index');
@@ -39,6 +40,7 @@ app.use('/login',loginRouter);
 app.use('/contacts',contactRouter);
 app.use('/photos',photoRouter);
 app.use('/board',boardRouter);
+app.use('/vote',voteRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
