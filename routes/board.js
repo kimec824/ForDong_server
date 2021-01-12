@@ -52,7 +52,7 @@ router.post('/',function(req,res){
             db = client.db(db_name);
 
             collection = db.collection(collection_name);
-            var new_title=req.body.title;
+            /*var new_title=req.body.title;
             var new_content=req.body.content;
             var new_time=req.body.time;
             var new_type=req.body.type;
@@ -71,7 +71,7 @@ router.post('/',function(req,res){
             });
 
             collection = db.collection(collection_name);
-            /*collection.find({}).toArray(function(err, results){
+            collection.find({}).toArray(function(err, results){
                 res.status(200).json({'myCollection' : results});
               });*/
             
