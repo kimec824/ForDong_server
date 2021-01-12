@@ -144,7 +144,7 @@ router.put('/',function(req, res){
             
             // req.body.phone으로 search 하고 change함.
             var query = {ID:req.body.ID};
-            var operator = {ID:req.body.ID ,name:req.body.changename, email:req.body.changeemail, phone: req.body.changephone, photo:req.body.photo};
+            var operator = {name:req.body.changename, email:req.body.changeemail, phone: req.body.changephone};
             var option = {upsert:true};
             collection.update(query,{$set: operator},option,function(err,upserted){
                 if(err){

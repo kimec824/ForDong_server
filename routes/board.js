@@ -103,7 +103,7 @@ router.post('/',function(req,res){
     });
 });
 
-router.post('/comment/:title',function(req,res){
+router.post('/comment',function(req,res){
     mongoClient.connect('mongodb://localhost/', function(error, client){
         if (error) {
             console.log(error);
@@ -113,9 +113,15 @@ router.post('/comment/:title',function(req,res){
 
             collection = db.collection(collection_name);
 
-            
+            var title = req.body.title;
+            console.log(title);
+            var comment = {
+                writer : req.body.writer,
+                content : req.body.content,
+            }
+
             if(Object.keys(req.body).length !== 0){
-                collection.update({"title":req.params.title},{$push:{comment: req.body}},function (err){
+                collection.update({"title":title},{$push:{comment: comment.s}},function (err){
                     if(err) throw err;
                     else
                         res.status(200).send({"Message":"success"});
@@ -181,7 +187,7 @@ router.get('/comment/:title',function(req,res){
     });
 });
 
-router.post('/result/:title',function(req,res){
+router.post('/result',function(req,res){
     mongoClient.connect('mongodb://localhost/', function(error, client){
         if (error) {
             console.log(error);
@@ -191,9 +197,15 @@ router.post('/result/:title',function(req,res){
 
             collection = db.collection(collection_name);
 
+
+            var title = req.body.title;
+            var result = {
+                ID : req.body.ID,
+                code: req.body.code
+            }
             
             if(Object.keys(req.body).length !== 0){
-                collection.update({"title":req.params.title},{$push:{result: req.body}},function (err){
+                collection.update({"title":title},{$push:{result: result}},function (err){
                     if(err) throw err;
                     else
                         res.status(200).send({"Message":"success"});
