@@ -224,7 +224,7 @@ router.post('/signup', function(req, res, next) {
 router.post( "/upload", multer({storage: storage}).single('upload'), function(req, res) {
     console.log(req.file);
     console.log(req.body);
-    //res.redirect("/photos/uploads/" + req.file.filename);
+    res.redirect("/photos/uploads/" + req.file.filename);
     console.log(req.file.filename);
 
     mongoClient.connect('mongodb://localhost/', function(error, client){
